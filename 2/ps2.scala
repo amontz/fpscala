@@ -16,3 +16,18 @@ object Fib {
     else go(n, 1, 0)
   }
 }
+
+/* 2.2 */
+
+object isSorted {
+  def isSorted[A](as: Array[A], ordered: (A,A) => Boolean) : Boolean = {
+    @annotation.tailrec
+    def loop(n: Int): Boolean = {
+      if (n == as.length) true
+      else if (!ordered(as(n-1), as(n))) false
+      else loop(n+1)
+    }
+    if (as.length == 0) true
+    else loop(1)
+  }
+}
