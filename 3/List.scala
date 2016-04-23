@@ -46,9 +46,37 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product2(ns: List[Double]) = 
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
+  def head[A](l: List[A]): A = l match {
+    case Nil => sys.error("tail of empty list")
+    case Cons(h, _) => h
+  }
 
+  // returning Nil makes drop cleaner!
   def tail[A](l: List[A]): List[A] = l match {
     case Nil => Nil
     case Cons(h, t) => t
+  }
+
+  // works on h not of type A?
+  def setHead[A](l: List[A], h: A) = l match {
+    case Nil => List(h)
+    case Cons(_, t) => Cons(h, t)
+  }
+
+  def drop[A](l: List[A], n: Int): List[A] = {
+    if (n <= 0) l
+    else {
+      drop(tail(l), n-1)
+    }
+  }
+
+  def dropWhile2[A](l: List[A], f: A => Boolean): List[A] = {
+    if (f(head(l))) dropWhile(tail(l), f)
+    else l
+  }
+
+  def dropWhile[A](l: List[A], f:A => Boolean): List[A] = l match {
+    case Cons(h, t) if(f(h)) => dropWhile(t, f)
+    case _ => l
   }
 }
