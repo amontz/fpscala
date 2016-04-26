@@ -79,4 +79,39 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(h, t) if(f(h)) => dropWhile(t, f)
     case _ => l
   }
+
+  def length[A](l: List[A]): Int = {
+    @annotation.tailrec
+    def counter(l2: List[A], n: Int): Int = l2 match {
+      case Nil => n
+      case Cons(_, t) => counter(t, n+1)
+    }
+    counter(l, 0)
+  }
+
+  def init[A](l: List[A]): List[A] = {
+    @annotation.tailrec
+    def loop(l2: List[A], lcopy: List[A]): List[A] = {
+      if (length(lcopy) == 1) l2
+      else loop(append(l2, List(head(lcopy))), drop(lcopy, 1))
+    }
+    loop(List(), l)
+  }
+
+  def lengthFR[A](l: List[A]): Int = {
+    def counter[A](a: A, len: Int): Int =  {
+      1 + len
+    }
+    foldRight(l, 0)(counter)
+  }
+
+  @annotation.tailrec
+  def foldLeft[A,B](as: List[A], z: B)(f: (B, A) => B): B = as match {
+    case Nil => z
+    case Cons(h,t) => foldLeft(t, f(z, h))(f)
+  }
+
+  def sumFL(l: List[Int]): Int = foldLeft(l, 0)(_ + _)
+  def productFL(l: List[Int]): Int = foldLeft(l, 1)(_ * _)
+  def lengthFL[A](l: List[A]): Int = foldLeft(l, 0)((c, _) => c+1)
 }
