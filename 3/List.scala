@@ -114,4 +114,38 @@ object List { // `List` companion object. Contains functions for creating and wo
   def sumFL(l: List[Int]): Int = foldLeft(l, 0)(_ + _)
   def productFL(l: List[Int]): Int = foldLeft(l, 1)(_ * _)
   def lengthFL[A](l: List[A]): Int = foldLeft(l, 0)((c, _) => c+1)
+
+  def reverse[A](l: List[A]): List[A] = {
+    foldRight(l, Nil:List[A])((h: A, z: List[A]) => append(z, List(h)))
+  }
+
+  def reverse_FL[A](l: List[A]): List[A] = {
+    foldLeft(l, Nil:List[A])((z: List[A], h: A) => append(List(h), z))
+  }
+
+  def foldLeft_FR[A,B](as: List[A], z: B)(f: (B,A) => B) = 
+    foldRight(as, (b:B) => b)((a, F) => b => F(f(b,a)))(z)
+
+  def foldRight_FL[A,B](as: List[A], z: B)(f: (A, B) => B): B =
+    foldLeft(as, (b:B) => b)((F, a) => b => F(f(a,b)))(z)
+
+  def append_FR[A](a1: List[A], a2: List[A]): List[A] = 
+    foldRight(a1, a2)((a, l) => Cons(a, l))
+
+  def concat[A](ll: List[List[A]]): List[A] =
+    foldRight(ll, (l:List[A]) => l)((as, F) => l => append(as, F(l)))(Nil:List[A])
+
+  def concat_FL[A](ll: List[List[A]]): List[A] = 
+    foldLeft(ll, (l:List[A]) => l)((F, as) => l => append(F(l), as))(Nil:List[A])
+
+  def addOne(l: List[Int]): List[Int] = l match {
+    case Nil => l
+    case Cons(h, t) => Cons(h + 1, addOne(t))
+  }
+
+  def dToString(l: List[Double]): List[String] = 
+    foldLeft(l, Nil:List[String])((sl, h) => append(sl, List(h.toString)))
+
+  def map[A,B](as: List[A])(f: A => B): List[B] = 
+    foldLeft(as, Nil:List[B])((nl, h) => append(nl, List(f(h))))
 }
