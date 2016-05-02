@@ -148,4 +148,39 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def map[A,B](as: List[A])(f: A => B): List[B] = 
     foldLeft(as, Nil:List[B])((nl, h) => append(nl, List(f(h))))
+
+  def filter_bad[A](as: List[A])(f: A => Boolean): List[A] = {
+    def addTrue(l: List[A], nl: List[A]): List[A] = l match {
+      case Nil => nl
+      case Cons(h, t) if f(h) => addTrue(t, Cons(h, nl))
+      case Cons(h, t) if !f(h) => addTrue(t, nl)
+    }
+    addTrue(reverse(as), Nil:List[A])
+  }
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = {
+    def addTrue(h: A, nl: List[A]): List[A] = {
+      if (f(h)) Cons(h, nl)
+      else nl
+    }
+    foldRight(as, Nil:List[A])(addTrue)
+  }
+
+  def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] =
+    foldLeft(as, Nil:List[B])((l, a) => append(l, f(a)))
+
+  def filter_FM[A](as: List[A])(f: A => Boolean): List[A] = {
+    flatMap(as)(a => if (f(a)) List(a) else Nil:List[A])
+  }
+
+  def add(l1: List[Double], l2: List[Double]): List[Double] = (l1, l2) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(h1+h2, add(t1, t2))
+  }
+
+  def zipWith[A,B,C](l1: List[A], l2: List[B])(f: (A, B) => C): List[C] = (l1, l2) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1,h2), zipWith(t1, t2)(f))
+  }
 }
